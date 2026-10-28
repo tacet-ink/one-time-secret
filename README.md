@@ -4,7 +4,7 @@ One-time secrets for [默·Tacet](https://tacet.ink) (Tacet): a read-once,
 zero-knowledge secret sharing page, published here for verification.
 This is the first page of the one-time-secret family (once secret);
 the family name is chosen so the second page, *request a secret*
-(`/sreq`, not yet published), fits under the same roof.
+(`/sreq`, published 2026-10-28), fits under the same roof.
 
 ## What is in this repo
 
@@ -59,7 +59,7 @@ beyond them.
 
 ## Roadmap note
 
-The *request a secret* page (`/sreq`) is planned and will be added to
+The *request a secret* page (`/sreq`) is included as `sreq.html` —
 this repo when it ships. The cryptographic primitives the family is
 built on live in the public
 [journal-core](https://github.com/tacet-ink/journal-core) repository.

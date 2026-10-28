@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>索取祕密｜默·Tacet</title>
+<meta name="description" content="默·Tacet 索取祕密：向對方索取一則祕密，產生兩串連結（對方填寫、你取件）。密文在你的公鑰下加密，伺服器只存密文。" />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#e9e1cd" />
+<meta name="theme-color" content="#1b2030" media="(prefers-color-scheme: dark)" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="索取祕密｜默·Tacet" />
+<meta property="og:description" content="默·Tacet 索取祕密：向對方索取一則祕密，產生兩串連結（對方填寫、你取件）。密文在你的公鑰下加密，伺服器只存密文。" />
+<meta property="og:image" content="https://tacet.ink/og-image.jpg" />
+<meta property="og:image:alt" content="默·Tacet 商標卡：默字、TACET 字樣與標語「一本伺服器連你是誰都不知道的日記」" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://tacet.ink/sreq" />
+<meta property="og:site_name" content="默·Tacet" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="索取祕密｜默·Tacet" />
+<meta name="twitter:description" content="默·Tacet 索取祕密：向對方索取一則祕密，產生兩串連結（對方填寫、你取件）。密文在你的公鑰下加密，伺服器只存密文。" />
+<meta name="twitter:image" content="https://tacet.ink/og-image.jpg" />
+<script>
+/* 明暗偏好前導（2026-09-15，kanban t_44a227eb）：渲染前設 data-theme，零 FOUC。
+   讀 localStorage 'tacet_theme'（light|dark）；缺省＝跟隨系統＝不落屬性，
+   純媒體查詢接管（與 app 殼 t_fdde9ba8 同構母型；19 頁逐位元組相同＝單一 hash）。 */
+(function () {
+  try {
+    var t = localStorage.getItem('tacet_theme');
+    if (t === 'light' || t === 'dark') {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+  } catch (e) {}
+})();
+</script>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<style>
+:root{--paper-1:#e9e1cd;--ink:#2c3850;--ink-body:#3f4c66;--ink-soft:#5d6a82;--ink-faint:#99a1b3;--line:rgba(44,56,80,0.16);--line-soft:rgba(44,56,80,0.10);--card:#faf6ec;--alert:#a04a3a}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(ellipse 100% 40% at 50% 0%,rgba(255,255,255,0.55) 0%,transparent 60%),var(--paper-1);color:var(--ink);font-family:'Noto Sans TC','Noto Sans JP','Hiragino Sans','Microsoft JhengHei',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh}
+a{color:var(--ink)}
+.serif{font-family:'Noto Serif TC','Noto Serif JP','Source Han Serif TC','Songti TC',ui-serif,Georgia,serif}
+.top{max-width:640px;margin:0 auto;padding:18px 26px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:14px;letter-spacing:0.3em;text-decoration:none;color:var(--ink)}
+.lang-switch{position:relative}
+.lang-switch .ls-btn{color:var(--ink-soft);font-family:inherit;font-size:12px;letter-spacing:0.2em;display:inline-flex;align-items:center;gap:7px;min-width:44px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--paper-1);cursor:pointer;transition:color .3s,border-color .3s,background .3s;touch-action:manipulation}
+.lang-switch .ls-btn:hover,.lang-switch .ls-btn:focus-visible{color:var(--ink);border-color:rgba(44,56,80,0.5);outline:none}
+.lang-switch.open .ls-btn{color:var(--ink);border-color:rgba(44,56,80,0.35);background:rgba(44,56,80,0.08)}
+.lang-switch .ls-btn svg{display:block;transition:transform .2s}
+.lang-switch.open .ls-btn svg{transform:rotate(180deg)}
+.lang-switch .ls-menu{position:absolute;top:calc(100% + 6px);right:0;min-width:150px;padding:6px 0;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:0 10px 30px rgba(44,56,80,0.16);z-index:30}
+.lang-switch .ls-menu[hidden]{display:none}
+.lang-switch .ls-menu button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:0 16px;border:none;background:transparent;font-family:inherit;font-size:13.5px;letter-spacing:0.08em;color:var(--ink-body);cursor:pointer;text-align:left}
+.lang-switch .ls-menu button:hover,.lang-switch .ls-menu button:focus-visible{color:var(--ink);background:rgba(44,56,80,0.06);outline:none}
+.lang-switch .ls-menu button[aria-current="true"]{color:var(--ink);background:rgba(44,56,80,0.08);cursor:default}
+.lang-switch .ls-menu button[aria-current="true"]::after{content:'·';font-size:20px;line-height:1}
+main{max-width:640px;margin:0 auto;padding:0 26px}
+.pagehead{padding:6vh 0 3vh}
+.ref-tag{font-size:12.5px;letter-spacing:0.25em;color:var(--ink-soft)}
+.ref-tag::after{content:'';display:block;width:28px;height:1px;background:rgba(44,56,80,0.35);margin-top:10px}
+.pagehead h1{font-size:24px;font-weight:400;letter-spacing:0.06em;margin:10px 0 10px}
+.tool{margin:10px 0 24px;padding:18px 20px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.tool label{display:block;font-size:13.5px;letter-spacing:0.1em;color:var(--ink-soft);margin-bottom:8px}
+.tool input[type="text"],.tool input[type="password"]{width:100%;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--paper-1);color:var(--ink);outline:none}
+.tool input:focus{border-color:rgba(44,56,80,0.5)}
+.tool button.go{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;padding:0 30px;border:1px solid rgba(44,56,80,0.45);border-radius:999px;background:rgba(44,56,80,0.06);color:var(--ink);font-size:15px;letter-spacing:0.18em;cursor:pointer;transition:background .3s,border-color .3s}
+.tool button.go:hover,.tool button.go:focus-visible{background:rgba(44,56,80,0.12);border-color:rgba(44,56,80,0.7);outline:none}
+.tool button.go:disabled{opacity:.45;cursor:default}
+.result{margin-top:16px;display:none;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.7}
+.result.ok{display:block;background:rgba(74,107,79,0.1);color:#4a6b4f;border:1px solid rgba(74,107,79,0.3)}
+.result.err{display:block;background:rgba(160,74,58,0.08);color:var(--alert);border:1px solid rgba(160,74,58,0.25)}
+.hint{margin-top:10px;font-size:12.5px;color:var(--ink-faint);letter-spacing:0.05em;line-height:1.9}
+.hint.warn{color:var(--alert)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.92em;background:rgba(44,56,80,0.07);border-radius:4px;padding:1px 6px}
+/* 索取祕密頁：request 效期選單＋年費權杖、fill 多行輸入、retrieve 揭示列與遮蔽態、唯讀連結列 */
+.tool textarea{display:block;width:100%;font-size:16px;font-family:inherit;line-height:1.8;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--paper-1);color:var(--ink);outline:none;resize:vertical}
+.tool textarea:focus{border-color:rgba(44,56,80,0.5)}
+.tool select{display:block;min-width:140px;min-height:44px;font-size:16px;font-family:inherit;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper-1);color:var(--ink)}
+.field{margin-top:12px}
+.linkrow{margin-top:12px}
+.linkrow .llabel{display:block;font-size:13px;letter-spacing:0.08em;color:var(--ink-soft);margin:10px 0 6px}
+.linkrow input{width:100%;font-size:13.5px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper-1);color:var(--ink);outline:none;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.linkrow .copybtn{margin-top:6px;min-height:40px;padding:0 20px;font-size:13px;letter-spacing:0.14em}
+.reveal-row{position:relative}
+.reveal-row .result{padding-right:52px}
+.reveal-row .eye{top:16px;transform:none}
+.eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:44px;height:44px;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;border-radius:999px;display:flex;align-items:center;justify-content:center}
+.eye svg{display:block}
+.plain{white-space:pre-wrap;word-break:break-word}
+.result.masked .plain{filter:blur(7px);user-select:none}
+.confbox{margin-top:12px;font-size:13px;letter-spacing:0.04em;color:var(--ink-body);line-height:1.9}
+footer.vfoot{text-align:center;padding:26px;font-size:12px;color:var(--ink-faint);letter-spacing:0.14em}
+footer.vfoot a{color:var(--ink-soft);text-decoration:none}
+footer.vfoot p{line-height:1.9}
+footer.vfoot a.vlink{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;padding:0 18px;border:1px solid var(--line);border-radius:999px}
+
+.theme-switch{position:relative}
+.theme-switch .ts-btn{color:var(--ink-soft);font-family:inherit;font-size:12px;letter-spacing:0.2em;display:inline-flex;align-items:center;gap:7px;min-width:44px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--paper-1);cursor:pointer;transition:color .3s,border-color .3s,background .3s;touch-action:manipulation}
+.theme-switch .ts-btn:hover,.theme-switch .ts-btn:focus-visible{color:var(--ink);border-color:rgba(44,56,80,0.5)}
+.theme-switch.open .ts-btn{color:var(--ink);border-color:rgba(44,56,80,0.35);background:rgba(44,56,80,0.08)}
+.theme-switch .ts-btn svg{display:block;transition:transform .2s}
+.theme-switch.open .ts-btn svg{transform:rotate(180deg)}
+.theme-switch .ts-menu{position:absolute;top:calc(100% + 6px);right:0;min-width:150px;padding:6px 0;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:0 10px 30px rgba(44,56,80,0.16);z-index:30}
+.theme-switch .ts-menu[hidden]{display:none}
+.theme-switch .ts-menu button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:0 16px;border:none;background:transparent;font-family:inherit;font-size:13.5px;letter-spacing:0.08em;color:var(--ink-body);cursor:pointer;text-align:left}
+.theme-switch .ts-menu button:hover,.theme-switch .ts-menu button:focus-visible{color:var(--ink);background:rgba(44,56,80,0.06);outline:none}
+.theme-switch .ts-menu button[aria-current="true"]{color:var(--ink);background:rgba(44,56,80,0.08);cursor:default}
+.theme-switch .ts-menu button[aria-current="true"]::after{content:'·';font-size:20px;line-height:1}
+.theme-switch .ts-icon{display:none}
+@media (max-width: 720px){.theme-switch .ts-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.theme-switch .ts-btn{gap:0}.theme-switch .ts-icon{display:block}}
+@media (prefers-color-scheme: dark) {
+  :root { --alert: #c9846b; }
+  :root {
+    --paper-1: #1b2030;
+    --ink: #d7cfc0;
+    --ink-body: #c3b8a6;
+    --ink-soft: #a29ab0;
+    --ink-faint: #7d8496;
+    --line: rgba(215, 207, 192, 0.16);
+    --line-soft: rgba(215, 207, 192, 0.10);
+    --card: #232a3c;
+  }
+  body {
+    background:
+      radial-gradient(ellipse 100% 40% at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+      var(--paper-1);
+  }
+  .ref-tag::after { background: rgba(215, 207, 192, 0.35); }
+  code { background: rgba(215, 207, 192, 0.07); }
+  .tool input:focus, .tool textarea:focus { border-color: rgba(215, 207, 192, 0.5); }
+  .tool button.go { border-color: rgba(215, 207, 192, 0.45); background: rgba(215, 207, 192, 0.06); }
+  .tool button.go:hover, .tool button.go:focus-visible { background: rgba(215, 207, 192, 0.12); border-color: rgba(215, 207, 192, 0.7); }
+  .lang-switch .ls-btn:hover, .lang-switch .ls-btn:focus-visible { color: var(--ink); border-color: rgba(215, 207, 192, 0.5); }
+  .lang-switch.open .ls-btn { color: var(--ink); border-color: rgba(215, 207, 192, 0.35); background: rgba(215, 207, 192, 0.08); }
+  .lang-switch .ls-menu { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+  .lang-switch .ls-menu button:hover, .lang-switch .ls-menu button:focus-visible { background: rgba(215, 207, 192, 0.06); }
+  .lang-switch .ls-menu button[aria-current="true"] { background: rgba(215, 207, 192, 0.08); }
+  .result.ok { background: rgba(138, 163, 139, 0.10); color: #8aa38b; border-color: rgba(138, 163, 139, 0.3); }
+  .result.err { background: rgba(201, 132, 107, 0.10); border-color: rgba(201, 132, 107, 0.3); }
+  .theme-switch .ts-btn:hover, .theme-switch .ts-btn:focus-visible { color: var(--ink); border-color: rgba(215, 207, 192, 0.5); }
+  .theme-switch.open .ts-btn { color: var(--ink); border-color: rgba(215, 207, 192, 0.35); background: rgba(215, 207, 192, 0.08); }
+  .theme-switch .ts-menu { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+  .theme-switch .ts-menu button:hover, .theme-switch .ts-menu button:focus-visible { background: rgba(215, 207, 192, 0.06); }
+  .theme-switch .ts-menu button[aria-current="true"] { background: rgba(215, 207, 192, 0.08); }
+}
+[data-theme='dark'] {
+  --alert: #c9846b;
+  --paper-1: #1b2030;
+  --ink: #d7cfc0;
+  --ink-body: #c3b8a6;
+  --ink-soft: #a29ab0;
+  --ink-faint: #7d8496;
+  --line: rgba(215, 207, 192, 0.16);
+  --line-soft: rgba(215, 207, 192, 0.10);
+  --card: #232a3c;
+  body {
+    background:
+      radial-gradient(ellipse 100% 40% at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+      var(--paper-1);
+  }
+  .ref-tag::after { background: rgba(215, 207, 192, 0.35); }
+  code { background: rgba(215, 207, 192, 0.07); }
+  .tool input:focus, .tool textarea:focus { border-color: rgba(215, 207, 192, 0.5); }
+  .tool button.go { border-color: rgba(215, 207, 192, 0.45); background: rgba(215, 207, 192, 0.06); }
+  .tool button.go:hover, .tool button.go:focus-visible { background: rgba(215, 207, 192, 0.12); border-color: rgba(215, 207, 192, 0.7); }
+  .lang-switch .ls-btn:hover, .lang-switch .ls-btn:focus-visible { color: var(--ink); border-color: rgba(215, 207, 192, 0.5); }
+  .lang-switch.open .ls-btn { color: var(--ink); border-color: rgba(215, 207, 192, 0.35); background: rgba(215, 207, 192, 0.08); }
+  .lang-switch .ls-menu { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+  .lang-switch .ls-menu button:hover, .lang-switch .ls-menu button:focus-visible { background: rgba(215, 207, 192, 0.06); }
+  .lang-switch .ls-menu button[aria-current="true"] { background: rgba(215, 207, 192, 0.08); }
+  .result.ok { background: rgba(138, 163, 139, 0.10); color: #8aa38b; border-color: rgba(138, 163, 139, 0.3); }
+  .result.err { background: rgba(201, 132, 107, 0.10); border-color: rgba(201, 132, 107, 0.3); }
+  .theme-switch .ts-btn:hover, .theme-switch .ts-btn:focus-visible { color: var(--ink); border-color: rgba(215, 207, 192, 0.5); }
+  .theme-switch.open .ts-btn { color: var(--ink); border-color: rgba(215, 207, 192, 0.35); background: rgba(215, 207, 192, 0.08); }
+  .theme-switch .ts-menu { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+  .theme-switch .ts-menu button:hover, .theme-switch .ts-menu button:focus-visible { background: rgba(215, 207, 192, 0.06); }
+  .theme-switch .ts-menu button[aria-current="true"] { background: rgba(215, 207, 192, 0.08); }
+}
+[data-theme='light'] {
+  --paper-1:#e9e1cd;
+  --ink:#2c3850;
+  --ink-body:#3f4c66;
+  --ink-soft:#5d6a82;
+  --ink-faint:#99a1b3;
+  --line:rgba(44,56,80,0.16);
+  --line-soft:rgba(44,56,80,0.10);
+  --card:#faf6ec;
+  --alert:#a04a3a;
+  body { background: radial-gradient(ellipse 100% 40% at 50% 0%, rgba(255, 255, 255, 0.55) 0%, transparent 60%), var(--paper-1); }
+  .ref-tag::after { background: rgba(44, 56, 80, 0.35); }
+  code { background: rgba(44, 56, 80, 0.07); }
+  .tool input:focus, .tool textarea:focus { border-color: rgba(44, 56, 80, 0.5); }
+  .tool button.go { border-color: rgba(44, 56, 80, 0.45); background: rgba(44, 56, 80, 0.06); }
+  .tool button.go:hover, .tool button.go:focus-visible { background: rgba(44, 56, 80, 0.12); border-color: rgba(44, 56, 80, 0.7); }
+  .lang-switch .ls-btn:hover, .lang-switch .ls-btn:focus-visible { color: var(--ink); border-color: rgba(44, 56, 80, 0.5); }
+  .lang-switch.open .ls-btn { color: var(--ink); border-color: rgba(44, 56, 80, 0.35); background: rgba(44, 56, 80, 0.08); }
+  .lang-switch .ls-menu { box-shadow: 0 10px 30px rgba(44, 56, 80, 0.16); }
+  .lang-switch .ls-menu button:hover, .lang-switch .ls-menu button:focus-visible { background: rgba(44, 56, 80, 0.06); }
+  .lang-switch .ls-menu button[aria-current="true"] { background: rgba(44, 56, 80, 0.08); }
+  .result.ok { background: rgba(74, 107, 79, 0.1); color: #4a6b4f; border-color: rgba(74, 107, 79, 0.3); }
+  .result.err { background: rgba(160, 74, 58, 0.08); border-color: rgba(160, 74, 58, 0.25); }
+  .theme-switch .ts-btn:hover, .theme-switch .ts-btn:focus-visible { color: var(--ink); border-color: rgba(44, 56, 80, 0.5); }
+  .theme-switch.open .ts-btn { color: var(--ink); border-color: rgba(44, 56, 80, 0.35); background: rgba(44, 56, 80, 0.08); }
+  .theme-switch .ts-menu { box-shadow: 0 10px 30px rgba(44, 56, 80, 0.16); }
+  .theme-switch .ts-menu button:hover, .theme-switch .ts-menu button:focus-visible { background: rgba(44, 56, 80, 0.06); }
+  .theme-switch .ts-menu button[aria-current="true"] { background: rgba(44, 56, 80, 0.08); }
+}
+</style>
+</head>
+<body>
+<nav class="top" aria-label="brand">
+  <a class="brand serif" href="/#intro">默·TACET</a>
+  <nav class="lang-switch" aria-label="Language">
+    <button type="button" class="ls-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Language: 中文">
+      <span id="s-lang-name" lang="zh-TW">中文</span>
+      <svg viewBox="0 0 10 6" width="10" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="ls-menu" role="menu" hidden>
+      <button type="button" role="menuitem" data-lang="zh" lang="zh-TW" aria-current="true" aria-disabled="true" tabindex="-1">中文</button>
+      <button type="button" role="menuitem" data-lang="en" lang="en">EN</button>
+      <button type="button" role="menuitem" data-lang="ja" lang="ja">日本語</button>
+    </div>
+  </nav>
+  <nav class="theme-switch" aria-label="明暗模式" data-label-system="跟隨系統" data-label-light="亮色" data-label-dark="暗色">
+    <button type="button" class="ts-btn" aria-haspopup="menu" aria-expanded="false" aria-label="明暗模式">
+      <svg class="ts-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2Zm0 1.5v9a4.5 4.5 0 0 1 0-9Z" fill="currentColor"/></svg>
+      <span class="ts-label">跟隨系統</span>
+      <svg viewBox="0 0 10 6" width="10" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="ts-menu" role="menu" hidden>
+      <button type="button" role="menuitem" data-theme-choice="system">跟隨系統</button>
+      <button type="button" role="menuitem" data-theme-choice="light">亮色</button>
+      <button type="button" role="menuitem" data-theme-choice="dark">暗色</button>
+    </div>
+  </nav>
+</nav>
+
+<main>
+  <header class="pagehead">
+    <span class="ref-tag" data-i="tag">索取祕密</span>
+    <h1 class="serif" data-i="h1">向對方索取一則祕密</h1>
+  </header>
+
+  <!-- request 模式（A，裸 /sreq） -->
+  <section id="req-sec" class="tool" style="display:none">
+    <p class="hint" data-i="a1"></p>
+    <div class="field">
+      <label for="req-ttl" data-i="ttlLabel">效期</label>
+      <select id="req-ttl">
+        <option value="600000" data-i="ttl10m">10 分鐘</option>
+        <option value="3600000" data-i="ttl1h">1 小時</option>
+        <option value="259200000" data-i="ttl3d">3 天</option>
+        <option value="604800000" data-i="ttl7d" selected>7 天</option>
+        <option id="req-ttl-14d" value="1209600000" data-i="ttl14d" hidden>14 天</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="req-annual" data-i="annualLabel">年費權杖（可選）</label>
+      <input id="req-annual" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+      <p class="hint" data-i="t1"></p>
+    </div>
+    <div class="go-slot">
+      <button id="req-go" type="button" class="go" data-i="create">產生索取請求</button>
+    </div>
+    <p class="hint" data-i="d2"></p>
+    <p class="hint" data-i="b1"></p>
+    <p class="hint" data-i="c1"></p>
+    <p class="hint" data-i="a2"></p>
+    <div id="req-result" class="result" role="status"></div>
+    <div id="req-out" class="result">
+      <div class="linkrow">
+        <span class="llabel" data-i="fillLink">填寫連結</span>
+        <input id="req-fill" type="text" readonly autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+        <button id="req-fill-copy" type="button" class="go copybtn" data-i="copy">複製</button>
+        <span class="llabel" data-i="retrieveLink">取件連結</span>
+        <input id="req-retrieve" type="text" readonly autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+        <button id="req-retrieve-copy" type="button" class="go copybtn" data-i="copy">複製</button>
+        <p class="hint" data-i="d1"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- fill 模式（B，?s=＋#p=） -->
+  <section id="fill-sec" style="display:none">
+    <div id="fill-tool" class="tool" style="display:none">
+      <p class="hint warn" data-i="w1"></p>
+      <p class="hint" data-i="c2"></p>
+      <p class="hint" data-i="f1"></p>
+      <label for="fill-input" data-i="fillInputLabel">要填入的內容</label>
+      <textarea id="fill-input" maxlength="32000" rows="6" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+      <div class="go-slot">
+        <button id="fill-go" type="button" class="go" disabled data-i="send">送出</button>
+      </div>
+      <div id="fill-result" class="result" role="status"></div>
+      <div id="fill-out" class="result">
+        <p data-i="h1"></p>
+        <p id="fill-conf" class="confbox"></p>
+      </div>
+    </div>
+    <p class="hint" style="display:none" id="fill-missing"></p>
+  </section>
+
+  <!-- retrieve 模式（A，?s=＋&t=＋#k=） -->
+  <section id="retrieve-sec" style="display:none">
+    <div id="retrieve-tool" class="tool" style="display:none">
+      <button id="retrieve-go" type="button" class="go" data-i="collect">取件</button>
+      <div class="reveal-row">
+        <div id="retrieve-result" class="result" role="status"></div>
+        <button id="retrieve-eye" type="button" class="eye" aria-label="隱藏內容" aria-pressed="true" style="display:none"><svg id="retrieve-eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
+      <button id="retrieve-copy" type="button" class="go" style="display:none" data-i="copy">複製</button>
+      <div id="retrieve-meta" class="confbox" style="display:none">
+        <p id="retrieve-time"></p>
+        <p id="retrieve-conf"></p>
+      </div>
+    </div>
+    <p class="hint" style="display:none" id="retrieve-missing"></p>
+  </section>
+</main>
+
+<footer class="vfoot">
+  <p id="f-power">本站由 <a id="f-intro" href="/#intro" data-base="landing" data-l="zh">默·Tacet</a> 開源技術 <a id="f-core" href="https://github.com/tacet-ink/journal-core">journal-core</a> 提供。</p>
+  <a class="vlink" href="/verify" data-i="verifyLink">了解本站的建置完整性</a>
+</footer>
+
+<script>
+(function () {
+  var I18N = {
+    zh: {
+      tag: '索取祕密', h1: '向對方索取一則祕密',
+      fillTag: '填寫祕密', fillH1: '填入對方向你索取的內容',
+      retTag: '取件祕密', retH1: '取回你索取的祕密',
+      a1: '向對方索取一則祕密（密碼、金鑰或代碼）。本頁會產生兩串連結：一串交給對方填寫，一串留給你自己取件。',
+      a2: '你按下「取件」並取得內容的當下，內容就會在伺服器銷毀，無法第二次取件。對方尚未填寫時按「取件」，不會銷毀任何東西。',
+      b1: '這個服務不用帳號，但伺服器會以 IP 限流防濫用（每分鐘與 24 小時累計額度）；不是完全匿名的。',
+      c1: '填寫連結只能寫入，拿到它的人讀不到任何內容；但任何拿到它的人都能搶先填入內容。請只透過你信任的管道交給對方。',
+      c2: '你輸入的內容會在這個頁面內加密，只有發出請求的人能解開。按下「送出」才會傳送；送出後無法修改或重送。',
+      d1: '這兩串連結只顯示這一次。請立即複製；刷新或離開後無法再取得。弄丟取件連結，內容將永遠無法開啟。',
+      d2: '選擇這個請求的效期（10 分鐘、1 小時、3 天或 7 天，預設 7 天）。期滿前未取件，無論對方是否已填寫，都會自動銷毀。',
+      f1: '內容為 1-8000 字元的純文字（年費層 1-32000）。',
+      g0: '對方填寫時間：{MM/DD HH:mm}。若時間與你預期不符，內容可能不是對方填的；必要時可口頭向對方確認。',
+      g1: '這個請求已無法填寫：可能已經填寫過、已過期，或不存在。',
+      g2: '連結不完整或不正確，無法解開內容。',
+      g2burn: '內容已在伺服器銷毀，無法重試。',
+      h1: '已送出。只有發出請求的人能開啟這則內容，本頁不會保存你輸入的內容。',
+      h2: '對方尚未填寫。這次查詢沒有銷毀任何東西，稍後可再按「取件」。',
+      w1: '只有在你確定是誰向你要這則內容的時候才填。任何拿到這個連結的人都能填入內容。',
+      g3: '填寫指紋：{conf_code}。取件時比對這個值，不一致代表內容可能不是預期的人填的。',
+      t1: '年費層：上限 1-32000 字元、效期可選 14 天。開請求時出示年費權杖即可啟用。',
+      e1: '這個請求已過期銷毀，無法再取件。',
+      e2: '找不到這個請求，內容可能已被取件銷毀。',
+      create: '產生索取請求', creating: '產生中……',
+      collect: '取件', reading: '讀取中……', send: '送出', sending: '送出中……',
+      copy: '複製', copied: '已複製', showText: '顯示內容', hideText: '隱藏內容',
+      fillLink: '填寫連結', retrieveLink: '取件連結',
+      ttlLabel: '效期', ttl10m: '10 分鐘', ttl1h: '1 小時', ttl3d: '3 天', ttl7d: '7 天', ttl14d: '14 天',
+      annualLabel: '年費權杖（可選）', fillInputLabel: '要填入的內容',
+      ratelimited: '太快了，請稍後再試。',
+      neterror: '連不上伺服器，請稍後再試。',
+      cryptoerror: '瀏覽器加密環境不可用或操作失敗，請改用現代瀏覽器後重試。',
+      fillinterrupted: '回應中斷：內容很可能已寫入。重新填寫會顯示 404，請勿重試；請告訴索取者用取件連結確認。',
+      badrequest: '請求有誤，請稍後再試。',
+      verifyLink: '了解本站的建置完整性'
+    },
+    en: {
+      tag: 'Secret request', h1: 'Ask someone for a secret',
+      fillTag: 'Fill in a secret', fillH1: 'Fill in what they asked you for',
+      retTag: 'Collect a secret', retH1: 'Collect the secret you asked for',
+      a1: 'Ask someone to send you a secret (a password, key or code). This page creates two links: one for them to fill in, and one for you to collect it.',
+      a2: 'The moment you press \u201cCollect\u201d and receive the content, it is destroyed on the server; it cannot be collected twice. Pressing \u201cCollect\u201d before they have filled it in destroys nothing.',
+      b1: 'No account needed; the server rate-limits by IP (per minute and per 24 hours) against abuse. This is not absolute anonymity.',
+      c1: 'The fill-in link can only write, and whoever holds it cannot read anything; but anyone holding it can fill it in first. Send it only through a channel you trust.',
+      c2: 'What you type is encrypted on this page, and only the person who sent the request can open it. Nothing is sent until you press \u201cSend\u201d; after that it cannot be edited or resent.',
+      d1: 'These two links are shown only once. Copy them now; refreshing or leaving means they cannot be recovered. If you lose the collection link, the content can never be opened.',
+      d2: 'Choose how long this request stays open (10 minutes, 1 hour, 3 days or 7 days, default 7 days). If it is not collected by then, it is destroyed automatically, whether or not it was filled in.',
+      f1: 'Plain text, 1-8000 characters (annual pass: 1-32000).',
+      g0: 'Filled in at {MM/DD HH:mm}. If this time is not what you expected, the content may not be from the person you asked; confirm with them in person if needed.',
+      g1: 'This request can no longer be filled in; it may already be filled in, expired, or not exist.',
+      g2: 'The link is incomplete or incorrect; the content cannot be opened.',
+      g2burn: 'The content has already been destroyed on the server and cannot be retried.',
+      h1: 'Sent. Only the person who sent the request can open it; this page does not keep what you typed.',
+      h2: 'Not filled in yet. Nothing was destroyed by this check; press \u201cCollect\u201d again later.',
+      w1: 'Only fill this in if you are sure who is asking for it. Anyone who has this link can fill in content.',
+      g3: 'Fill fingerprint: {conf_code}. Compare this value when you collect; a mismatch means the content may not have been filled in by the person you expected.',
+      t1: 'Annual pass: 1-32000 characters, with a 14-day expiry option. Present your annual token when creating a request to enable it.',
+      e1: 'This request expired and has been destroyed; it can no longer be collected.',
+      e2: 'This request can no longer be found; its content was likely collected and destroyed.',
+      create: 'Create request', creating: 'Creating…',
+      collect: 'Collect', reading: 'Reading…', send: 'Send', sending: 'Sending…',
+      copy: 'Copy', copied: 'Copied', showText: 'Show text', hideText: 'Hide text',
+      fillLink: 'Fill-in link', retrieveLink: 'Collection link',
+      ttlLabel: 'Expiry', ttl10m: '10 minutes', ttl1h: '1 hour', ttl3d: '3 days', ttl7d: '7 days', ttl14d: '14 days',
+      annualLabel: 'Annual token (optional)', fillInputLabel: 'Content to fill in',
+      ratelimited: 'Too fast; please try again shortly.',
+      neterror: 'Cannot reach the server; please try again later.',
+      cryptoerror: 'The browser crypto environment is unavailable or the operation failed; please retry with a modern browser.',
+      fillinterrupted: 'The response was interrupted, but the content was probably saved. Refilling will show 404; please do not retry. Tell the requester to check with the collection link.',
+      badrequest: 'The request was invalid; please try again shortly.',
+      verifyLink: 'Learn about this site\'s build integrity'
+    },
+    ja: {
+      tag: '秘密の依頼', h1: '相手に秘密を送ってもらう',
+      fillTag: '秘密の入力', fillH1: '依頼された内容を入力',
+      retTag: '秘密の受け取り', retH1: '依頼した秘密を受け取る',
+      a1: '相手に秘密（パスワード、鍵、コードなど）の送信を依頼します。このページは 2 つのリンクを発行します。相手が入力するためのリンクと、あなたが受け取るためのリンクです。',
+      a2: '「受け取る」を押して内容を受け取った瞬間に、サーバー側で内容は破棄され、二度と受け取れません。相手がまだ入力していないときに「受け取る」を押しても、何も破棄されません。',
+      b1: 'アカウント不要。ただし、サーバーは不正利用を防ぐため IP 単位で 1 分ごと・直近 24 時間の回数制限をしています。完全な匿名ではありません。',
+      c1: '入力用リンクは書き込み専用で、持っている人が内容を読むことはできません。ただし、リンクを持つ人なら誰でも先に入力できてしまいます。信頼できる経路で相手に渡してください。',
+      c2: '入力した内容はこのページ内で暗号化され、依頼した人だけが開けます。「送信」を押すまで何も送られません。送信後は修正も再送もできません。',
+      d1: 'この 2 つのリンクは一度しか表示されません。今すぐコピーしてください。更新や離脱後は再取得できません。受け取り用リンクをなくすと、内容は二度と開けません。',
+      d2: 'この依頼の有効期限をお選びください（10 分、1 時間、3 日、7 日。既定は 7 日）。期限までに受け取られない場合、入力の有無にかかわらず自動的に破棄されます。',
+      f1: '本文は 1-8000 文字のプレーンテキスト（年間パス：1-32000）で入力してください。',
+      g0: '入力日時：{MM/DD HH:mm}。想定と異なる日時の場合、依頼した相手以外が入力した可能性があります。必要に応じて相手に口頭で確認してください。',
+      g1: 'この依頼にはもう入力できません。入力済み、期限切れ、または存在しない可能性があります。',
+      g2: 'リンクが不完全か正しくありません。内容を開けません。',
+      g2burn: '内容はすでにサーバー側で破棄されており、再試行できません。',
+      h1: '送信しました。依頼した人だけが内容を開けます。このページは入力内容を保存しません。',
+      h2: '相手はまだ入力していません。この確認で破棄されたものはありません。後でもう一度「受け取る」を押してください。',
+      w1: '依頼者が誰であるか確かめられた場合のみ入力してください。このリンクを持っている人なら誰でも入力できます。',
+      g3: '入力フィンガープリント：{conf_code}。受け取る際にこの値を照合してください。一致しない場合、内容が想定した相手によるものではなかった可能性があります。',
+      t1: '年間パス：1-32000 文字、有効期限 14 日を選択可能。依頼作成時に年間トークンを提示すると有効になります。',
+      e1: 'この依頼は有効期限が過ぎて破棄されました。受け取ることはできません。',
+      e2: 'この依頼は見つかりません。すでに受け取られて破棄された可能性があります。',
+      create: '依頼を作成する', creating: '作成中…',
+      collect: '受け取る', reading: '読み込み中…', send: '送信', sending: '送信中…',
+      copy: 'コピー', copied: 'コピーしました', showText: '本文を表示', hideText: '本文を隠す',
+      fillLink: '入力用リンク', retrieveLink: '受け取り用リンク',
+      ttlLabel: '有効期限', ttl10m: '10 分', ttl1h: '1 時間', ttl3d: '3 日', ttl7d: '7 日', ttl14d: '14 日',
+      annualLabel: '年間トークン（任意）', fillInputLabel: '入力する内容',
+      ratelimited: '操作が速すぎます。しばらく待ってからお試しください。',
+      neterror: 'サーバーに接続できません。しばらくしてからお試しください。',
+      cryptoerror: 'ブラウザの暗号化環境が使えません、または操作に失敗しました。新しいブラウザで再試行してください。',
+      fillinterrupted: '応答が途中で切れましたが、内容はすでに保存されている可能性があります。再入力すると404が表示されますので、再試行しないでください。依頼者を受け取りリンクで確認するように伝えてください。',
+      badrequest: 'リクエストが無効です。しばらくしてからお試しください。',
+      verifyLink: '本サイトのビルド整合性について'
+    }
+  };
+  // 頁尾導流句：數字＝連結節點（0 介紹頁、1 journal-core），三語語序不同故逐語列出。
+  var FOOT = {
+    zh: ['本站由 ', 0, ' 開源技術 ', 1, ' 提供。'],
+    en: ['Powered by the open-source ', 1, ' from ', 0, '.'],
+    ja: ['本サイトは ', 0, ' のオープンソース技術 ', 1, ' で提供']
+  };
+  var current = (navigator.language || '').toLowerCase().indexOf('ja') === 0 ? 'ja'
+    : (navigator.language || '').toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en';
+
+  // 密文契約（jr5e. 家族，與後端 lib/sreq 同值；R1 問 2 KAT 定值為準）：
+  // 前綴 jr5e.、AAD/HKDF info 域 jr5e:<slot_id>、eph_pub 65B 未壓縮點、iv 12B、AES-256-GCM。
+  // 兩步 WebCrypto 派生（M-3 收口）：step1 deriveKey(ECDH→HKDF, usages ['deriveKey'])，
+  // step2 deriveKey(HKDF→AES-GCM length:256)（length 必帶，缺即 Node v26 拒）。
+  var CIPHER = 'jr5e.', AADP = 'jr5e:';
+
+  function $(id) { return document.getElementById(id); }
+  function t(key) { return I18N[current][key]; }
+
+  // ── 語言切換（share/secret 頁同款）──
+  function persistLang(lang) {
+    try { document.cookie = 'tacet_lang=' + lang + ';path=/;max-age=31536000;samesite=lax;secure'; } catch (e) {}
+    try { localStorage.setItem('tacet_lang', lang); } catch (e) {}
+  }
+  var LANG_NAME = { zh: '中文', en: 'EN', ja: '日本語' };
+  var nav = document.querySelector('.lang-switch');
+  var btn = nav.querySelector('.ls-btn');
+  var menu = nav.querySelector('.ls-menu');
+  function setOpen(open) {
+    nav.classList.toggle('open', open);
+    menu.hidden = !open;
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    setOpen(menu.hidden);
+  });
+  document.addEventListener('click', function (e) {
+    if (!nav.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !menu.hidden) { setOpen(false); btn.focus(); }
+  });
+  menu.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('data-lang') === current) return;
+      persistLang(b.getAttribute('data-lang'));
+      current = b.getAttribute('data-lang');
+      applyLang();
+      setOpen(false);
+    });
+  });
+
+  function applyLang() {
+    // 依模式選 tag/h1（request=tag/h1，fill=fillTag/fillH1，retrieve=retTag/retH1）
+    var tagKey = MODE === 'fill' ? 'fillTag' : MODE === 'retrieve' ? 'retTag' : 'tag';
+    var h1Key = MODE === 'fill' ? 'fillH1' : MODE === 'retrieve' ? 'retH1' : 'h1';
+    document.querySelector('.ref-tag').textContent = t(tagKey);
+    document.querySelector('.pagehead h1').textContent = t(h1Key);
+    document.querySelectorAll('[data-i]').forEach(function (el) {
+      var v = t(el.getAttribute('data-i'));
+      if (typeof v === 'string') el.textContent = v;
+    });
+    document.documentElement.lang = current === 'zh' ? 'zh-TW' : current;
+    document.querySelectorAll('footer.vfoot a[data-l]').forEach(function (a) {
+      a.setAttribute('href', current === 'en' ? '/en/#intro' : current === 'ja' ? '/ja/#intro' : '/#intro');
+    });
+    var foot = $('f-power'), footLinks = [$('f-intro'), $('f-core')];
+    while (foot.firstChild) foot.removeChild(foot.firstChild);
+    FOOT[current].forEach(function (part) {
+      foot.appendChild(typeof part === 'number' ? footLinks[part] : document.createTextNode(part));
+    });
+    var langName = document.getElementById('s-lang-name');
+    langName.textContent = LANG_NAME[current];
+    langName.lang = current === 'zh' ? 'zh-TW' : current;
+    btn.setAttribute('aria-label', 'Language: ' + LANG_NAME[current]);
+    menu.querySelectorAll('button').forEach(function (b) {
+      var isCur = b.getAttribute('data-lang') === current;
+      b.setAttribute('aria-current', String(isCur));
+      if (isCur) { b.setAttribute('aria-disabled', 'true'); b.tabIndex = -1; }
+      else { b.removeAttribute('aria-disabled'); b.tabIndex = 0; }
+    });
+    if (retEye) setRetEyeIcon(plainShown);
+    // 佔位回填（{MM/DD HH:mm}／{conf_code}）：data-i 迴圈已把佔位字面塞入，此處覆蓋成真值。
+    if (retWrittenAt) $('retrieve-time').textContent = t('g0').replace('{MM/DD HH:mm}', fmtTime(retWrittenAt));
+    if (retConfCode) $('retrieve-conf').textContent = t('g3').replace('{conf_code}', retConfCode);
+    if (fillConfCode) $('fill-conf').textContent = t('g3').replace('{conf_code}', fillConfCode);
+  }
+
+  // ── base64url 編碼/解碼（無 padding 正典）──
+  function b64ToBytes(text) {
+    var bin = atob(text), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+  function b64urlToBytes(text) {
+    var s = text.replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    return b64ToBytes(s);
+  }
+  function bytesToB64url(bytes) {
+    var bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  // ── jr5e. 加密/解密（兩步 deriveKey；與 KAT form C 同形）──
+  function aadOf(slotId) { return new TextEncoder().encode(AADP + slotId); }
+  function hkdfParams(salt, slotId) { return { name: 'HKDF', hash: 'SHA-256', salt: salt, info: aadOf(slotId), length: 256 }; }
+  function importEcdhPub(jwk) { return crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, false, []); }
+  function importEcdhPriv(jwk) { return crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveKey']); }
+  // fill 端（B）：現生成臨時 P-256 金鑰對，封裝明文到 A.pub；eph 私鑰用完即棄、永不過線。
+  async function sealToApub(aPubKey, text, slotId) {
+    var keypair = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveKey']);
+    var ephPubRaw = new Uint8Array(await crypto.subtle.exportKey('raw', keypair.publicKey)); // 65B（0x04 未壓縮點）
+    var aad = aadOf(slotId);
+    var hk = await crypto.subtle.deriveKey({ name: 'ECDH', public: aPubKey }, keypair.privateKey, hkdfParams(ephPubRaw, slotId), false, ['deriveKey']);
+    var aesKey = await crypto.subtle.deriveKey(hkdfParams(ephPubRaw, slotId), hk, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    var ctTag = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv, additionalData: aad }, aesKey, new TextEncoder().encode(text)));
+    var blob = new Uint8Array(65 + 12 + ctTag.length);
+    blob.set(ephPubRaw, 0); blob.set(iv, 65); blob.set(ctTag, 77);
+    return CIPHER + bytesToB64url(blob);
+  }
+  // retrieve 端（A）：以 A 私鑰解開 blob；blob 內 eph_pub 65B 解析成 JWK 再 import（WebCrypto 不收 raw ECDH 公鑰）。
+  async function openBlobWithApriv(aPrivKey, cipher, slotId) {
+    var raw;
+    try { raw = b64urlToBytes(cipher.slice(CIPHER.length)); } catch (e) { return null; }
+    if (raw.length < 65 + 12 + 16) return null;
+    var eph = raw.slice(0, 65), iv = raw.slice(65, 77), ctTag = raw.slice(77);
+    if (eph[0] !== 0x04) return null;
+    var ephPubJwk = { kty: 'EC', crv: 'P-256', x: bytesToB64url(eph.slice(1, 33)), y: bytesToB64url(eph.slice(33, 65)) };
+    var ephPubKey;
+    try { ephPubKey = await importEcdhPub(ephPubJwk); } catch (e) { return null; }
+    var aad = aadOf(slotId);
+    try {
+      var hk = await crypto.subtle.deriveKey({ name: 'ECDH', public: ephPubKey }, aPrivKey, hkdfParams(eph, slotId), false, ['deriveKey']);
+      var aesKey = await crypto.subtle.deriveKey(hkdfParams(eph, slotId), hk, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+      var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv, additionalData: aad }, aesKey, ctTag);
+      return new TextDecoder().decode(plain);
+    } catch (e) { return null; }
+  }
+
+  function fmtTime(ms) {
+    var d = new Date(ms);
+    function p(n) { return (n < 10 ? '0' : '') + n; }
+    return p(d.getMonth() + 1) + '/' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  // 複製（clipboard API 需手勢授權且可能靜默失敗，失敗時退回 execCommand）
+  function copyText(text, doneBtn, copyKey) {
+    function done() {
+      if (doneBtn) {
+        var prev = t('copy');
+        doneBtn.textContent = t('copied');
+        setTimeout(function () { doneBtn.textContent = t(copyKey || 'copy'); }, 2000);
+      }
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '0';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { if (document.execCommand('copy')) done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+      else fallback();
+    } catch (e) { fallback(); }
+  }
+
+  // ── 模式判定（fragment 鍵：#p=＝fill、#k=＝retrieve、皆無＝request；query 帶 s/t）──
+  var params = new URLSearchParams(location.search);
+  var slotId = (params.get('s') || '').trim();
+  if (/^[0-9a-fA-F]{32}$/.test(slotId)) slotId = slotId.toLowerCase();
+  var token = (params.get('t') || '').trim();
+  var fragKey = '', fragVal = '';
+  if (location.hash.indexOf('#p=') === 0) { fragKey = 'p'; fragVal = location.hash.slice(3); }
+  else if (location.hash.indexOf('#k=') === 0) { fragKey = 'k'; fragVal = location.hash.slice(3); }
+  var MODE = fragKey === 'p' ? 'fill' : fragKey === 'k' ? 'retrieve' : 'request';
+
+  var aPubJwk = null;      // fill 端：A 公鑰 JWK（#p=）
+  var aPrivKey = null;     // retrieve 端：A 私鑰 CryptoKey（#k=）
+  var fillConfCode = '';   // fill 成功：確認碼（G3）
+  var retWrittenAt = 0;    // retrieve 成功：填寫時間（G0）
+  var retConfCode = '';    // retrieve 成功：確認碼（G3）
+  var plainShown = true;   // retrieve 揭示態
+  var retEye = null;
+
+  function showErr(elId, key) {
+    var el = $(elId);
+    el.className = 'result err';
+    el.textContent = t(key);
+  }
+  function showOk(elId, key) {
+    var el = $(elId);
+    el.className = 'result ok';
+    el.textContent = t(key);
+  }
+
+  // ── request 模式（A）──
+  var reqBusy = false;
+  function resetReq() {
+    $('req-result').className = 'result';
+    $('req-result').textContent = '';
+    $('req-out').className = 'result';
+    $('req-fill').value = '';
+    $('req-retrieve').value = '';
+    $('req-fill-copy').textContent = t('copy');
+    $('req-retrieve-copy').textContent = t('copy');
+  }
+  $('req-annual').addEventListener('input', function () {
+    var has = $('req-annual').value.trim().length > 0;
+    $('req-ttl-14d').hidden = !has;
+  });
+  $('req-go').addEventListener('click', async function () {
+    if (reqBusy) return;
+    resetReq();
+    reqBusy = true;
+    $('req-go').disabled = true;
+    $('req-go').textContent = t('creating');
+    try {
+      // 頁內生成 A P-256 金鑰對（私鑰只在記憶體；取件連結 fragment 帶 JWK 含 d）。
+      // C-1 (r2)：extractable 必 true：非 extractable 私鑰 exportKey('jwk', privateKey) 即 InvalidAccessError（WebCrypto spec）；
+      // 威脅模型不變（JWK 全形本就走連結 fragment；fill 端 ephemeral 金鑰對保持 extractable=false、不出機）。
+      var keypair = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveKey']);
+      var privJwk = await crypto.subtle.exportKey('jwk', keypair.privateKey);
+      var pubJwk = await crypto.subtle.exportKey('jwk', keypair.publicKey);
+      var body = { a_pub_jwk: pubJwk, ttl_ms: Number($('req-ttl').value) };
+      var annual = $('req-annual').value.trim();
+      if (annual) body.annual_token = annual;
+      var res;
+      try {
+        res = await fetch('/api/sreq', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      } catch (e) {
+        // MINOR-1 (r2)：僅 fetch 拒絕算網路錯誤。
+        showErr('req-result', 'neterror');
+        return;
+      }
+      if (res.status === 429) { showErr('req-result', 'ratelimited'); return; }
+      if (res.status === 400) { showErr('req-result', 'badrequest'); return; }
+      if (!res.ok) { showErr('req-result', 'neterror'); return; }
+      var data;
+      try { data = await res.json(); } catch (e) { showErr('req-result', 'badrequest'); return; }
+      // 正典路徑（server 不出 fragment）；頁內接 #p=（公鑰）／#k=（私鑰）。私鑰只存本頁記憶體。
+      var fillLink = location.origin + data.fill_url + '#p=' + bytesToB64url(new TextEncoder().encode(JSON.stringify(pubJwk)));
+      var retrieveLink = location.origin + data.retrieve_url + '#k=' + bytesToB64url(new TextEncoder().encode(JSON.stringify(privJwk)));
+      $('req-fill').value = fillLink;
+      $('req-retrieve').value = retrieveLink;
+      $('req-out').className = 'result ok';
+      // 明文（A 金鑰）成功上鎖後清空年費輸入，避免同一權杖被重按產生第二則。
+      $('req-annual').value = '';
+      $('req-ttl-14d').hidden = true;
+    } catch (e) {
+      // MINOR-1 (r2)：非 fetch 錯誤（crypto.subtle 不可用／金鑰生成／匯出失敗）誠實訊息，不誤歸因網路。
+      showErr('req-result', 'cryptoerror');
+    } finally {
+      reqBusy = false;
+      $('req-go').textContent = t('create');
+      $('req-go').disabled = false;
+    }
+  });
+  $('req-fill').addEventListener('click', function () { $('req-fill').select(); });
+  $('req-retrieve').addEventListener('click', function () { $('req-retrieve').select(); });
+  $('req-fill-copy').addEventListener('click', function () { copyText($('req-fill').value, $('req-fill-copy')); });
+  $('req-retrieve-copy').addEventListener('click', function () { copyText($('req-retrieve').value, $('req-retrieve-copy')); });
+
+  // ── fill 模式（B）──
+  var fillBusy = false, fillDone = false;
+  $('fill-input').addEventListener('input', function () {
+    if (!fillDone) $('fill-go').disabled = !$('fill-input').value.length;
+  });
+  $('fill-go').addEventListener('click', async function () {
+    if (fillBusy || fillDone) return;
+    var text = $('fill-input').value;
+    if (!text.length) return;
+    fillBusy = true;
+    $('fill-go').disabled = true;
+    $('fill-go').textContent = t('sending');
+    try {
+      // 揭示前零請求：按送出才 importKey(A.pub) → 封裝 → POST。
+      var aPubKey = await importEcdhPub(aPubJwk);
+      var blob = await sealToApub(aPubKey, text, slotId);
+      var res;
+      try {
+        res = await fetch('/api/sreq/fill?s=' + slotId, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ciphertext: blob })
+        });
+      } catch (e) {
+        // MINOR-1 (r2)：僅 fetch 拒絕算網路錯誤。
+        showErr('fill-result', 'neterror');
+        return;
+      }
+      if (res.status === 404) { showErr('fill-result', 'g1'); fillDone = true; return; }
+      if (res.status === 429) { showErr('fill-result', 'ratelimited'); return; }
+      if (!res.ok) { showErr('fill-result', 'badrequest'); return; }
+      var data;
+      try { data = await res.json(); } catch (e) { showErr('fill-result', 'fillinterrupted'); fillDone = true; return; }
+      // 成功：H1＋G3（確認碼）。清空＋丟棄臨時私鑰（sealToApub 內作用域即棄）。
+      fillConfCode = typeof data.conf_code === 'string' ? data.conf_code : '';
+      $('fill-result').className = 'result ok';
+      $('fill-result').textContent = t('h1');
+      $('fill-out').className = 'result ok';
+      if (fillConfCode) {
+        $('fill-conf').textContent = t('g3').replace('{conf_code}', fillConfCode);
+      }
+      $('fill-input').value = '';
+      fillDone = true;
+    } catch (e) {
+      // MINOR-1 (r2)：非 fetch 錯誤（封裝／importKey 失敗）誠實訊息。
+      showErr('fill-result', 'cryptoerror');
+    } finally {
+      fillBusy = false;
+      $('fill-go').textContent = t('send');
+      $('fill-go').disabled = fillDone;
+    }
+  });
+
+  // ── retrieve 模式（A）──
+  var revealed = false, terminal = false, retBusy = false;
+  var EYE_OPEN = '<path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>';
+  var EYE_CLOSED = '<path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><line x1="4" y1="20" x2="20" y2="4"/>';
+  function setRetEyeIcon(show) {
+    var ic = $('retrieve-eye-icon');
+    if (ic) ic.innerHTML = show ? EYE_OPEN : EYE_CLOSED;
+    var b = $('retrieve-eye');
+    b.setAttribute('aria-pressed', String(show));
+    b.setAttribute('aria-label', show ? t('hideText') : t('showText'));
+  }
+  function retReveal(text) {
+    var el = $('retrieve-result');
+    el.className = 'result ok';
+    el.textContent = '';
+    var span = document.createElement('span');
+    span.id = 'retrieve-plain';
+    span.className = 'plain';
+    span.textContent = text;
+    el.appendChild(span);
+    plainShown = true;
+    $('retrieve-eye').style.display = '';
+    $('retrieve-copy').style.display = '';
+    setRetEyeIcon(true);
+  }
+  $('retrieve-eye').addEventListener('click', function () {
+    plainShown = !plainShown;
+    $('retrieve-result').classList.toggle('masked', !plainShown);
+    var p = $('retrieve-plain');
+    if (p) p.setAttribute('aria-hidden', String(!plainShown));
+    setRetEyeIcon(plainShown);
+  });
+  $('retrieve-copy').addEventListener('click', function () {
+    var p = $('retrieve-plain');
+    if (p) copyText(p.textContent, $('retrieve-copy'));
+  });
+  $('retrieve-go').addEventListener('click', async function () {
+    if (revealed || terminal || retBusy) return;
+    retBusy = true;
+    $('retrieve-go').disabled = true;
+    $('retrieve-go').textContent = t('reading');
+    var burned = false;
+    try {
+      var res;
+      try {
+        res = await fetch('/api/sreq/' + slotId + '?t=' + encodeURIComponent(token), { method: 'GET', cache: 'no-store' });
+      } catch (e) {
+        // MINOR-1 (r2)：僅 fetch 拒絕算網路錯誤（此刻 burned 仍 false）。
+        showErr('retrieve-result', 'neterror');
+        return;
+      }
+      if (res.status === 404) { showErr('retrieve-result', 'e2'); terminal = true; return; }
+      if (res.status === 410) { showErr('retrieve-result', 'e1'); terminal = true; return; }
+      if (res.status === 429) { showErr('retrieve-result', 'ratelimited'); return; }
+      if (!res.ok) { showErr('retrieve-result', 'neterror'); return; }
+      burned = true;
+      var data;
+      try { data = await res.json(); } catch (e) { if (burned) throw e; data = null; }
+      if (!data || data.ciphertext === null || data.ciphertext === undefined) {
+        // 尚未填寫：不焚燒，可稍後重按。
+        showErr('retrieve-result', 'h2');
+        return;
+      }
+      var cipher = String(data.ciphertext);
+      if (cipher.slice(0, CIPHER.length) !== CIPHER) {
+        showErr('retrieve-result', 'g2');
+        $('retrieve-result').textContent += ' ' + t('g2burn');
+        terminal = true;
+        return;
+      }
+      var plain = await openBlobWithApriv(aPrivKey, cipher, slotId);
+      if (plain === null) {
+        // 已焚燒後才解不開（fragment 被截斷/改過/slot 污染）＝G2 兩句全顯。
+        showErr('retrieve-result', 'g2');
+        $('retrieve-result').textContent += ' ' + t('g2burn');
+        terminal = true;
+        return;
+      }
+      retReveal(plain);
+      retWrittenAt = typeof data.written_at === 'number' ? data.written_at : 0;
+      retConfCode = typeof data.conf_code === 'string' ? data.conf_code : '';
+      if (retWrittenAt || retConfCode) {
+        $('retrieve-meta').style.display = '';
+        if (retWrittenAt) $('retrieve-time').textContent = t('g0').replace('{MM/DD HH:mm}', fmtTime(retWrittenAt));
+        if (retConfCode) $('retrieve-conf').textContent = t('g3').replace('{conf_code}', retConfCode);
+      }
+      revealed = true;
+    } catch (e) {
+      // MINOR-1 (r2)：非 fetch 錯誤（頁內加密／context 型）；burned=true（已 200）保守面維持 g2。
+      showErr('retrieve-result', burned ? 'g2' : 'cryptoerror');
+      if (burned) { $('retrieve-result').textContent += ' ' + t('g2burn'); terminal = true; }
+    } finally {
+      retBusy = false;
+      $('retrieve-go').textContent = t('collect');
+      $('retrieve-go').disabled = revealed || terminal;
+      if (revealed) $('retrieve-go').style.display = 'none';
+    }
+  });
+
+  // ── 初始化：顯示對應模式 ──
+  if (MODE === 'request') {
+    $('req-sec').style.display = 'block';
+  } else if (MODE === 'fill') {
+    $('fill-sec').style.display = 'block';
+    // 前驗 #p=（A.pub JWK）：bad/缺＝G2、零請求。
+    if (!slotId || !/^[0-9a-f]{32}$/.test(slotId)) {
+      $('fill-missing').textContent = t('g2');
+      $('fill-missing').style.display = 'block';
+    } else {
+      try {
+        // C-2 (r2)：decode＝encode 的逆（encode＝b64url(utf8(JSON))）；percent 解碼對 b64url 恆 identity（全 unreserved）＝死巷根因。
+        aPubJwk = JSON.parse(new TextDecoder().decode(b64urlToBytes(fragVal)));
+        if (!aPubJwk || aPubJwk.kty !== 'EC' || aPubJwk.crv !== 'P-256' || typeof aPubJwk.x !== 'string' || typeof aPubJwk.y !== 'string') throw new Error('badjwk');
+      } catch (e) {
+        $('fill-missing').textContent = t('g2');
+        $('fill-missing').style.display = 'block';
+      }
+      if (!$('fill-missing').style.display) $('fill-tool').style.display = 'block';
+    }
+  } else if (MODE === 'retrieve') {
+    $('retrieve-sec').style.display = 'block';
+    // 前驗 #k=（A 私鑰 JWK）：b64url 可解→JSON 可解→importKey(['deriveKey']) 三關過才放行取件；否則 G2、零請求。
+    if (!slotId || !/^[0-9a-f]{32}$/.test(slotId) || !token) {
+      $('retrieve-missing').textContent = t('g2');
+      $('retrieve-missing').style.display = 'block';
+    } else {
+      (async function () {
+        try {
+          // C-2 (r2)：同上（decode＝encode 的逆）。
+          var privJwk = JSON.parse(new TextDecoder().decode(b64urlToBytes(fragVal)));
+          if (!privJwk || privJwk.kty !== 'EC' || privJwk.crv !== 'P-256' || typeof privJwk.d !== 'string') throw new Error('badjwk');
+          aPrivKey = await importEcdhPriv(privJwk);
+          $('retrieve-tool').style.display = 'block';
+        } catch (e) {
+          $('retrieve-missing').textContent = t('g2');
+          $('retrieve-missing').style.display = 'block';
+        }
+      })();
+    }
+  }
+
+  retEye = $('retrieve-eye');
+  applyLang();
+})();
+</script>
+<script>
+/* 明暗三態 menu（2026-09-15，kanban t_44a227eb）：對位 app theme.ts 母型。
+   缺省＝跟隨系統：移除屬性＋清儲存；label 與三態文案從 DOM data-label-* 讀
+   （腳本跨頁逐字共用＝單一 hash）。選後不收合＝即時預覽（app 母型同款）。
+   theme-color 同步：亮暗兩行 meta 是媒體查詢態，手動態以單 meta（無 media）
+   即時覆寫（app index.html syncThemeColorMeta 同構母型），初始態也同步一次。 */
+(function () {
+  var KEY = 'tacet_theme';
+  var nav = document.querySelector('.theme-switch');
+  if (!nav) return;
+  var btn = nav.querySelector('.ts-btn');
+  var menu = nav.querySelector('.ts-menu');
+  var label = nav.querySelector('.ts-label');
+  function systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  function syncThemeColorMeta(dark) {
+    var meta = document.querySelector('meta[name="theme-color"]:not([media])');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'theme-color';
+      var first = document.querySelector('meta[name="theme-color"]');
+      if (first && first.parentNode) first.parentNode.insertBefore(meta, first);
+      else document.head.appendChild(meta);
+    }
+    meta.setAttribute('content', dark ? '#1b2030' : '#e9e1cd');
+  }
+  function apply(theme) {
+    if (theme === 'light' || theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', theme);
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    syncThemeColorMeta(theme === 'dark' || (theme !== 'light' && systemDark()));
+  }
+  function store(theme) {
+    try {
+      if (theme === 'system') localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, theme);
+    } catch (e) {}
+  }
+  function labelName(t) {
+    var m = { system: nav.getAttribute('data-label-system'), light: nav.getAttribute('data-label-light'), dark: nav.getAttribute('data-label-dark') };
+    return m[t] || '';
+  }
+  function mark() {
+    var t = null;
+    try { t = localStorage.getItem(KEY); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = 'system';
+    label.textContent = labelName(t);
+    menu.querySelectorAll('button').forEach(function (b) {
+      var isCur = b.getAttribute('data-theme-choice') === t;
+      b.setAttribute('aria-current', String(isCur));
+      if (isCur) { b.setAttribute('aria-disabled', 'true'); b.tabIndex = -1; }
+      else { b.removeAttribute('aria-disabled'); b.tabIndex = 0; }
+    });
+    apply(t);
+  }
+  function setOpen(open) {
+    nav.classList.toggle('open', open);
+    menu.hidden = !open;
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    setOpen(menu.hidden);
+  });
+  document.addEventListener('click', function (e) {
+    if (!nav.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !menu.hidden) { setOpen(false); btn.focus(); }
+  });
+  menu.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var v = b.getAttribute('data-theme-choice');
+      store(v);
+      mark();
+    });
+  });
+  mark();
+})();
+</script>
+</body>
+</html>
