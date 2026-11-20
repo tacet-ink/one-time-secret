@@ -67,3 +67,7 @@ built on live in the public
 ## License
 
 MIT. See [LICENSE](./LICENSE).
+
+## Trademark
+
+"默·Tacet" and the Tacet name and logo are not licensed under MIT; forks and derivatives must not present themselves as Tacet.
